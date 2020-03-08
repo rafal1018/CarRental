@@ -26,18 +26,17 @@ public class MyUserDetailsService implements UserDetailsService {
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
-        User user = userService.findByUserName(userName);
+        User user = userService.findUserByUserName(userName);
         List<GrantedAuthority> authorities = getUserAuthority(user.getRoles());
         return buildUserForAuthentication(user, authorities);
     }
 
-    private List<GrantedAuthority> getUserAuthority(Set<Role> userRoles){
-        Set<GrantedAuthority> roles = new HashSet<GrantedAuthority>();
+    private List<GrantedAuthority> getUserAuthority(Set<Role> userRoles) {
+        Set<GrantedAuthority> roles = new HashSet<>();
         for (Role role : userRoles) {
             roles.add(new SimpleGrantedAuthority(role.getRole()));
         }
-        List<GrantedAuthority> grantedAuthorities = new ArrayList<>(roles);
-        return grantedAuthorities;
+        return new ArrayList<>(roles);
     }
 
     private UserDetails buildUserForAuthentication(User user, List<GrantedAuthority>authorities){

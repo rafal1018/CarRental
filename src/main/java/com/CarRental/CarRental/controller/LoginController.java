@@ -4,10 +4,10 @@ import com.CarRental.CarRental.model.User;
 import com.CarRental.CarRental.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
 
@@ -17,34 +17,43 @@ public class LoginController {
     @Autowired
     private UserService userService;
 
-    @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public String login(Model model) {
-        return "login";
+    @GetMapping(value={"/", "/login"})
+    public ModelAndView login(){
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("login");
+        return modelAndView;
     }
 
-    @RequestMapping(value = "/registration", method = RequestMethod.GET)
-    public String registration(Model model) {
+
+    @GetMapping(value="/registration")
+    public ModelAndView registration(){
+        ModelAndView modelAndView = new ModelAndView();
         User user = new User();
-        model.addAttribute("user", user);
-        return "registration";
+        modelAndView.addObject("user", user);
+        modelAndView.setViewName("registration");
+        return modelAndView;
     }
 
-    @RequestMapping(value = "/registration", method = RequestMethod.POST)
-    public String createNewUser(@Valid User user, BindingResult bindingResult, Model model) {
-        User userExists = userService.findByUserName(user.getUserName());
+    @PostMapping(value = "/registration")
+    public ModelAndView createNewUser(@Valid User user, BindingResult bindingResult) {
+        ModelAndView modelAndView = new ModelAndView();
+        User userExists = userService.findUserByUserName(user.getUserName());
         if (userExists != null) {
             bindingResult
                     .rejectValue("userName", "error.user",
                             "There is already a user registered with the user name provided");
         }
-        if (!(bindingResult.hasFieldErrors())) {
+        if (bindingResult.hasErrors()) {
+            modelAndView.setViewName("registration");
+        } else {
             userService.saveUser(user);
-            model.addAttribute("successMessage", "User has been registered successfully");
-            model.addAttribute("user", new User());
-        }
-        return "registration";
-    }
+            modelAndView.addObject("successMessage", "User has been registered successfully");
+            modelAndView.addObject("user", new User());
+            modelAndView.setViewName("registration");
 
+        }
+        return modelAndView;
+    }
 
 
 }
