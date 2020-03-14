@@ -5,8 +5,8 @@ import com.CarRental.CarRental.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
@@ -17,7 +17,7 @@ public class LoginController {
     @Autowired
     private UserService userService;
 
-    @GetMapping(value={"/", "/login"})
+    @RequestMapping(value={"/login"}, method = RequestMethod.GET)
     public ModelAndView login(){
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("login");
@@ -25,7 +25,7 @@ public class LoginController {
     }
 
 
-    @GetMapping(value="/registration")
+    @RequestMapping(value="/registration", method = RequestMethod.GET)
     public ModelAndView registration(){
         ModelAndView modelAndView = new ModelAndView();
         User user = new User();
@@ -34,7 +34,7 @@ public class LoginController {
         return modelAndView;
     }
 
-    @PostMapping(value = "/registration")
+    @RequestMapping(value = "/registration", method = RequestMethod.POST)
     public ModelAndView createNewUser(@Valid User user, BindingResult bindingResult) {
         ModelAndView modelAndView = new ModelAndView();
         User userExists = userService.findUserByUserName(user.getUserName());
@@ -42,6 +42,11 @@ public class LoginController {
             bindingResult
                     .rejectValue("userName", "error.user",
                             "There is already a user registered with the user name provided");
+        }
+        if (!user.getPassword().equals(user.getRetypePassword())){
+            bindingResult
+                    .rejectValue("retypePassword", "error.user",
+                    "Password doesn't match");
         }
         if (bindingResult.hasErrors()) {
             modelAndView.setViewName("registration");

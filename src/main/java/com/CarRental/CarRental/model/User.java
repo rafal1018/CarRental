@@ -41,11 +41,15 @@ public class User {
     private String name;
 
     @Column(name = "last_name")
-    @NotEmpty(message = "*Please provide your name")
+    @NotEmpty(message = "*Please provide last name")
     private String lastName;
 
     @Column(name = "activate")
     private Boolean active;
+
+    @Transient
+    @NotEmpty(message = "Please confirm password")
+    private String retypePassword;
 
     @ManyToMany(cascade = CascadeType.MERGE)
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
