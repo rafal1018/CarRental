@@ -1,5 +1,6 @@
 package com.CarRental.CarRental.configuration;
 
+import com.CarRental.CarRental.SuccessHandler;
 import com.CarRental.CarRental.service.MyUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -21,6 +22,10 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Autowired
     private MyUserDetailsService userDetailsService;
 
+    @Autowired
+    private SuccessHandler successHandler;
+
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth
@@ -32,28 +37,24 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
 
         String loginPage = "/login";
-        String homePage = "/home";
+        String homePage = "/carrental";
 
         http.
                 authorizeRequests()
+                .antMatchers("/login").permitAll()
                 .antMatchers("/carrental").permitAll()
-                .antMatchers(loginPage).permitAll()
                 .antMatchers("/registration").permitAll()
                 .antMatchers("/user/**").hasAuthority("USER")
-                .antMatchers("/admin/**").hasAuthority("ADMIN")
-                .anyRequest()
-                .authenticated()
-                .and().csrf().disable()
-                .formLogin()
-                .loginPage(loginPage)
-                .loginPage("/login")
-                .failureUrl("/login?error=true")
-                .defaultSuccessUrl("/home")
+                .antMatchers("/admin/**").hasAuthority("ADMIN").anyRequest()
+                .authenticated().and().csrf().disable().formLogin()
+                .loginPage("/login").failureUrl("/login?error=true")
+                .successHandler(successHandler)
                 .usernameParameter("user_name")
                 .passwordParameter("password")
                 .and().logout()
-                .logoutRequestMatcher(new AntPathRequestMatcher(homePage))
-                .logoutSuccessUrl(loginPage).and().exceptionHandling();
+                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                .logoutSuccessUrl("/login").and().exceptionHandling()
+                .accessDeniedPage("/access-denied");
     }
 
     @Override

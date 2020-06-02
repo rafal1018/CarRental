@@ -10,7 +10,9 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 @Component
 public class SuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
@@ -18,28 +20,59 @@ public class SuccessHandler extends SavedRequestAwareAuthenticationSuccessHandle
     private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest arg0, HttpServletResponse arg1, Authentication authentication) throws IOException {
+    protected void handle(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
+        String targetUrl = determineTargetUrl(authentication);
 
-        boolean hasUserRole = false;
-        boolean hasAdminRole = false;
+        if (response.isCommitted()) {
+            System.out.println("Can't redirect");
+            return;
+        }
+
+        redirectStrategy.sendRedirect(request, response, targetUrl);
+    }
+
+    protected String determineTargetUrl(Authentication authentication) {
+        String url = "";
 
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-        for (GrantedAuthority grantedAuthority : authorities) {
-            if (grantedAuthority.getAuthority().equals("USER")) {
-                hasUserRole = true;
-                break;
-            } else if (grantedAuthority.getAuthority().equals("ADMIN")) {
-                hasAdminRole = true;
-                break;
-            }
+
+        List<String> roles = new ArrayList<String>();
+
+        for (GrantedAuthority a : authorities) {
+            roles.add(a.getAuthority());
         }
 
-        if (hasUserRole) {
-            redirectStrategy.sendRedirect(arg0, arg1, "/user");
-        } else if (hasAdminRole) {
-            redirectStrategy.sendRedirect(arg0, arg1, "/admin");
+        if (isAdmin(roles)) {
+            url = "/admin/carrental";
+        } else if (isUser(roles)) {
+            url = "/user/carrental";
         } else {
-            throw new IllegalStateException();
+            url = "/accessDenied";
         }
+
+        return url;
     }
+
+    public void setRedirectStrategy(RedirectStrategy redirectStrategy) {
+        this.redirectStrategy = redirectStrategy;
+    }
+
+    protected RedirectStrategy getRedirectStrategy() {
+        return redirectStrategy;
+    }
+
+    private boolean isUser(List<String> roles) {
+        if (roles.contains("USER")) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isAdmin(List<String> roles) {
+        if (roles.contains("ADMIN")) {
+            return true;
+        }
+        return false;
+    }
+
 }
