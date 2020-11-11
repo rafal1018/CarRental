@@ -60,4 +60,14 @@ public class User {
     @JoinTable(name = "users_cars", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "car_id"))
     private List<Car> cars;
 
+    @Column(name = "status")
+    private Boolean status;
+
+    @Column(name = "budget")
+    private Long budget;
+
+    @OneToMany(mappedBy = "creator", cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH}
+    , fetch = FetchType.LAZY)
+    private List<Comment> comments;
+
 }
