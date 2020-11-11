@@ -8,6 +8,7 @@ import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -56,6 +57,9 @@ public class Car {
     @NotEmpty(message = "*Please provide engine capacity")
     private Long engineCapacity;
 
+    @Column(name = "year_of_production")
+    private String yearOfProduction;
+
     @Column(name = "bail")
     @NotEmpty(message = "*Please provide bail value")
     private Long bail;
@@ -71,7 +75,21 @@ public class Car {
     @JoinTable(name = "users_cars", joinColumns = @JoinColumn(name = "car_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
     private List<User> users;
 
+    @OneToMany(cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH},
+            mappedBy = "car",
+            fetch = FetchType.LAZY)
+    private List<Comment> comments;
+
     @Lob
     @Basic(fetch = FetchType.LAZY)
     private byte[] carPicture;
+
+    @Column(name = "date_from")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dateFrom;
+
+    @Column(name = "date_to")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dateTo;
+
 }
