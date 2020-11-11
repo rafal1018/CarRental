@@ -8,7 +8,7 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class HomeController {
 
-    @RequestMapping(value = "/carrental", method = RequestMethod.GET)
+    @RequestMapping(value = {"/carrental", "/"}, method = RequestMethod.GET)
     public ModelAndView guesHhome(){
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("guestHome");
