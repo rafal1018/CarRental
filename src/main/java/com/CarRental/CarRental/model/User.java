@@ -67,7 +67,7 @@ public class User {
     private Long budget;
 
     @OneToMany(mappedBy = "creator", cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH}
-    , fetch = FetchType.LAZY)
+            , fetch = FetchType.LAZY)
     private List<Comment> comments;
 
 }

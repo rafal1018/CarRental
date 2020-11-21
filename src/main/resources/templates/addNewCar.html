@@ -194,6 +194,7 @@ body {
   }
 }
 
+
     </style>
 
 </head>
@@ -214,42 +215,72 @@ body {
 </div>
 
 <div class="row">
-    <form action="#" th:action="@{/registration}" style="border:1px solid #cc" class="form-cont"
-          th:object="${user}" method="POST" role="form">
+    <form th:action="@{/admin/saveCar}" style="border:1px solid #cc" class="form-cont"
+          th:object="${car}" method="POST" role="form">
         <div class="container">
-            <h1>Sign up</h1>
-            <p>Please fill in this form to create an account</p>
+            <h1>Add new car</h1>
+            <p>Please fill in this form to add new car</p>
             <hr>
 
-            <label class="error-msg" for="name" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></label>
-            <input type="text" th:field="*{name}" placeholder="Name"
-                   id="name">
+            <label class="error-msg" for="brandName" th:if="${#fields.hasErrors('brandName')}"
+                   th:errors="*{brandName}"></label>
+            <input type="text" th:field="*{brandName}" placeholder="Braand name"
+                   id="brandName">
 
-            <label class="error-msg" for="lastName" th:if="${#fields.hasErrors('lastName')}"
-                   th:errors="*{lastName}"></label>
-            <input type="text" th:field="*{lastName}" placeholder="Last name"
-                   id="lastName">
+            <label class="error-msg" for="model" th:if="${#fields.hasErrors('model')}"
+                   th:errors="*{model}"></label>
+            <input type="text" th:field="*{model}" placeholder="Model"
+                   id="model">
 
-            <label class="error-msg" for="email" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></label>
-            <input type="text" th:field="*{email}" placeholder="Email"
-                   id="email">
+            <label class="error-msg" for="type" th:if="${#fields.hasErrors('type')}"
+                   th:errors="*{type}"></label>
+            <input type="text" th:field="*{type}" placeholder="Type"
+                   id="type">
 
-            <label class="error-msg" for="userName" th:if="${#fields.hasErrors('userName')}"
-                   th:errors="*{userName}"></label>
-            <input type="text" th:field="*{userName}" placeholder="User name"
-                   id="userName">
+            <label class="error-msg" for="engineType" th:if="${#filds.hasErrors('engineType')}"
+                   th:errors="*{engineType}"></label>
+            <select type="text" th:field="*{engineType}" id="engineType">
+                <option th:each="type : ${engineTypes}" th:value="${type.getEngineType}"></option>
+            </select>
 
-            <label class="error-msg" for="password" th:if="${#fields.hasErrors('password')}"
-                   th:errors="*{password}"></label>
-            <input type="password" th:field="*{password}" placeholder="Password"
-                   id="password">
+            <label class="error-msg" for="bodyColor" th:if="${#fields.hasErrors('bodyColor')}"
+                   th:errors="*{bodyColor}"></label>
+            <input type="text" th:field="*{bodyColor}" placeholder="Body coor"
+                   id="bodyColor">
 
-            <label class="error-msg" for="psw-repeat" th:text="${retypePassword}"
-                   th:errors="*{retypePassword}"></label>
-            <input type="password" th:field="*{retypePassword}" placeholder="Repeat Password" id="psw-repeat">
+            <label class="error-msg" for="engineCapacity"></label>
+            <input type="number" th:field="*{engineCapacity}" placeholder="Engine capacity"
+                   id="engineCapacity">
+
+            <label class="error-msg" for="enginePower" th:if="${#fields.hasErrors('enginePower')}"
+                   th:errors="*{enginePower}"></label>
+            <input type="number" th:field="*{enginePower}" placeholder="Engine power"
+                   id="enginePower">
+
+            <label class="error-msg" for="yearOfProduction" th:if="${#filds.hasErrors('yearOfProduction')}"
+                   th:errors="*{yearOfProduction}"></label>
+            <select type="text" th:field="*{yearOfProduction}" id="yearOfProduction">
+                <option th:each="year : ${years}" th:value="${type.getYearOfProduction}"></option>
+            </select>
+
+            <label class="error-msg" for="bail" th:if="${#fields.hasErrors('bail')}"
+                   th:errors="*{bail}"></label>
+            <input type="number" th:field="*{bail}" placeholder="Bail"
+                   id="bail">
+
+            <label class="error-msg" for="rentalPrice" th:if="${#fields.hasErrors('rentalPrice')}"
+                   th:errors="*{rentalPrice}"></label>
+            <input type="number" th:field="*{rentalPrice}" placeholder="Rental price"
+                   id="rentalPrice">
+
+            <label for="imgFile">Browse pictures</label>
+            <input type="file" name="images" th:field="*{images}" id="imgFile">
+            <span th:if="${#fields.hasErrors('images')}}">
+                <span th:errors="*{images}"></span>
+            </span>
 
             <div class="clear-fix">
-                <button type="submit">Sign Up</button>
+                <button type="submit">Save car</button>
             </div>
             <h2><span th:utext="${successMessage}" class="success-msg"></span></h2>
         </div>

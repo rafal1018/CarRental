@@ -32,7 +32,7 @@ public class Car {
     @Column(name = "model_name")
     @Length(min = 2, message = "*Model name must have at least 2 characters")
     @NotEmpty(message = "*Please provide a model name")
-    private String modelName;
+    private String model;
 
     @Column(name = "type")
     @Length(min = 2, message = "*Type must have at least 2 characters")
@@ -54,7 +54,6 @@ public class Car {
     private Long enginePower;
 
     @Column(name = "engine_capacity")
-    @NotEmpty(message = "*Please provide engine capacity")
     private Long engineCapacity;
 
     @Column(name = "year_of_production")
@@ -80,9 +79,8 @@ public class Car {
             fetch = FetchType.LAZY)
     private List<Comment> comments;
 
-    @Lob
-    @Basic(fetch = FetchType.LAZY)
-    private byte[] carPicture;
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "car")
+    private List<Image> images;
 
     @Column(name = "date_from")
     @Temporal(TemporalType.TIMESTAMP)
